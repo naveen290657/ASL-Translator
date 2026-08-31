@@ -1,11 +1,22 @@
 import os
 import pickle
-import mediapipe as mp
 import cv2
+import mediapipe as mp
+from mediapipe.tasks import python
+from mediapipe.tasks.python import vision
 
-mp_hands = mp.solutions.hands
-# max_num_hands=1 ensures we only focus on the primary signing hand
-hands = mp_hands.Hands(static_image_mode=True, max_num_hands=1, min_detection_confidence=0.3)
+# Initialize Tasks API Hand Landmarker
+model_path = 'hand_landmarker.task'
+if not os.path.exists(model_path):
+    raise FileNotFoundError("Missing 'hand_landmarker.task'. Run the download command first.")
+
+base_options = python.BaseOptions(model_asset_path=model_path)
+options = vision.HandLandmarkerOptions(
+    base_options=base_options,
+    num_hands=1,
+    min_hand_detection_confidence=0.3
+)
+detector = vision.HandLandmarker.create_from_options(options)
 
 DATA_DIR = './data'
 data = []
@@ -13,31 +24,42 @@ labels = []
 
 for dir_ in os.listdir(DATA_DIR):
     class_dir = os.path.join(DATA_DIR, dir_)
+    if not os.path.isdir(class_dir):
+        continue
+
     for img_path in os.listdir(class_dir):
         data_aux = []
         x_ = []
         y_ = []
 
-        img = cv2.imread(os.path.join(class_dir, img_path))
+        img_full_path = os.path.join(class_dir, img_path)
+        img = cv2.imread(img_full_path)
+        if img is None:
+            continue
+
         img_rgb = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)
+        mp_image = mp.Image(image_format=mp.ImageFormat.SRGB, data=img_rgb)
 
-        results = hands.process(img_rgb)
-        if results.multi_hand_landmarks:
-            for hand_landmarks in results.multi_hand_landmarks:
-                # Get the X and Y coordinates of all 21 points
-                for i in range(len(hand_landmarks.landmark)):
-                    x_.append(hand_landmarks.landmark[i].x)
-                    y_.append(hand_landmarks.landmark[i].y)
+        detection_result = detector.detect(mp_image)
 
-                # Normalize coordinates so the AI isn't confused if your hand is off-center
-                for i in range(len(hand_landmarks.landmark)):
-                    data_aux.append(hand_landmarks.landmark[i].x - min(x_))
-                    data_aux.append(hand_landmarks.landmark[i].y - min(y_))
+        if detection_result.hand_landmarks:
+            # Process only the primary hand detected
+            hand = detection_result.hand_landmarks[0]
 
-            data.append(data_aux)
-            labels.append(dir_) # e.g., 'A', 'B'
+            for landmark in hand:
+                x_.append(landmark.x)
+                y_.append(landmark.y)
 
-f = open('data.pickle', 'wb')
-pickle.dump({'data': data, 'labels': labels}, f)
-f.close()
-print("Hand landmarks successfully extracted and saved to data.pickle!")
+            for landmark in hand:
+                data_aux.append(landmark.x - min(x_))
+                data_aux.append(landmark.y - min(y_))
+
+            # Strictly verify 42 features (21 landmarks * 2 coords)
+            if len(data_aux) == 42:
+                data.append(data_aux)
+                labels.append(dir_)
+
+with open('data.pickle', 'wb') as f:
+    pickle.dump({'data': data, 'labels': labels}, f)
+
+print(f"Features extracted! Saved {len(data)} samples across {len(set(labels))} classes to data.pickle.")
