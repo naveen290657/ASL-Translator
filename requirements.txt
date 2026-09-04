@@ -1,5 +1,12 @@
 opencv-python
-mediapipe==0.10.35
+mediapipe
 scikit-learn
 numpy
 pyttsx3
+pywin32
+streamlit
+streamlit-webrtc
+matplotlib
+seaborn
+Pillow
+av

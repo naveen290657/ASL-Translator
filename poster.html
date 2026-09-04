@@ -1,0 +1,741 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ASL Recognition Project Poster - September 8, 2026</title>
+  <style>
+    :root {
+      --primary: #1e3c72;
+      --primary-dark: #0f1f3d;
+      --accent: #00d2ff;
+      --accent-green: #10b981;
+      --accent-purple: #8b5cf6;
+      --text-main: #1f2937;
+      --text-muted: #4b5563;
+      --bg-card: #ffffff;
+      --border-color: #e5e7eb;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, Helvetica, Arial, sans-serif;
+      background-color: #0f172a;
+      color: var(--text-main);
+      padding: 20px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      min-height: 100vh;
+    }
+
+    /* Floating Toolbar */
+    .toolbar {
+      position: fixed;
+      top: 15px;
+      right: 20px;
+      z-index: 1000;
+      display: flex;
+      gap: 12px;
+      background: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(10px);
+      padding: 10px 18px;
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+    }
+
+    .btn {
+      background: linear-gradient(135deg, #2563eb, #1d4ed8);
+      color: white;
+      border: none;
+      padding: 8px 18px;
+      border-radius: 25px;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 15px rgba(37, 99, 235, 0.4);
+    }
+
+    .btn-secondary {
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-secondary:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Poster Sheet Container */
+    .poster-sheet {
+      width: 1400px;
+      min-height: 960px;
+      background: #f8fafc;
+      box-shadow: 0 25px 60px rgba(0, 0, 0, 0.6);
+      border-radius: 16px;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      margin-top: 50px;
+      margin-bottom: 40px;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* Header Banner */
+    .poster-header {
+      background: linear-gradient(135deg, #0f1f3d 0%, #1e3c72 60%, #2a5298 100%);
+      color: white;
+      padding: 30px 45px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 5px solid var(--accent);
+      position: relative;
+    }
+
+    .poster-header::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: linear-gradient(90deg, #00d2ff, #10b981, #8b5cf6);
+    }
+
+    .header-main {
+      flex: 1;
+    }
+
+    .header-badges {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .badge {
+      background: rgba(0, 210, 255, 0.15);
+      border: 1px solid #00d2ff;
+      color: #00d2ff;
+      padding: 4px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-date {
+      background: rgba(16, 185, 129, 0.2);
+      border-color: #10b981;
+      color: #6ee7b7;
+    }
+
+    .poster-title {
+      font-size: 2.3rem;
+      font-weight: 800;
+      line-height: 1.2;
+      letter-spacing: -0.5px;
+      margin-bottom: 8px;
+      text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+    }
+
+    .poster-subtitle {
+      font-size: 1.15rem;
+      color: #93c5fd;
+      font-weight: 500;
+    }
+
+    .header-meta {
+      text-align: right;
+      background: rgba(255, 255, 255, 0.08);
+      padding: 16px 24px;
+      border-radius: 12px;
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      min-width: 320px;
+    }
+
+    .meta-college {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .meta-dept {
+      font-size: 0.88rem;
+      color: #cbd5e1;
+      margin-bottom: 8px;
+    }
+
+    .meta-presenter {
+      font-size: 0.95rem;
+      font-weight: 600;
+      color: #38bdf8;
+      border-top: 1px solid rgba(255, 255, 255, 0.15);
+      padding-top: 8px;
+    }
+
+    /* Metric Ribbon */
+    .metric-ribbon {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 15px;
+      padding: 16px 45px;
+      background: #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .ribbon-item {
+      background: white;
+      padding: 12px 20px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      gap: 15px;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+      border-left: 4px solid var(--primary);
+    }
+
+    .ribbon-icon {
+      font-size: 1.8rem;
+    }
+
+    .ribbon-value {
+      font-size: 1.45rem;
+      font-weight: 800;
+      color: var(--primary);
+      line-height: 1;
+    }
+
+    .ribbon-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+    }
+
+    /* Main Poster Body Grid */
+    .poster-body {
+      display: grid;
+      grid-template-columns: 1fr 1.15fr 1fr;
+      gap: 22px;
+      padding: 25px 45px;
+      flex: 1;
+    }
+
+    .col {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* Cards */
+    .card {
+      background: var(--bg-card);
+      border-radius: 12px;
+      padding: 20px 22px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+      border: 1px solid #e2e8f0;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .card-title {
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: var(--primary);
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      border-bottom: 2px solid #f1f5f9;
+      padding-bottom: 8px;
+    }
+
+    .card-title-icon {
+      color: #2563eb;
+      font-size: 1.25rem;
+    }
+
+    .card-text {
+      font-size: 0.88rem;
+      color: var(--text-main);
+      line-height: 1.55;
+    }
+
+    /* Pipeline Diagram */
+    .pipeline-container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-top: 5px;
+    }
+
+    .step-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 10px 14px;
+      border-radius: 8px;
+      transition: all 0.2s ease;
+    }
+
+    .step-box:hover {
+      background: #eff6ff;
+      border-color: #bfdbfe;
+    }
+
+    .step-num {
+      width: 28px;
+      height: 28px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+
+    .step-content h4 {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .step-content p {
+      font-size: 0.76rem;
+      color: var(--text-muted);
+      margin-top: 1px;
+    }
+
+    /* Math Formula Highlight */
+    .formula-box {
+      background: linear-gradient(135deg, #eff6ff, #f0fdf4);
+      border: 1px solid #bbf7d0;
+      padding: 12px 16px;
+      border-radius: 8px;
+      margin: 10px 0;
+      text-align: center;
+    }
+
+    .formula-text {
+      font-family: 'Cambria Math', 'Times New Roman', serif;
+      font-size: 1.05rem;
+      font-weight: 600;
+      color: #065f46;
+    }
+
+    .formula-desc {
+      font-size: 0.75rem;
+      color: #047857;
+      margin-top: 4px;
+    }
+
+    /* Table */
+    .perf-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+      margin-top: 8px;
+    }
+
+    .perf-table th {
+      background: #f1f5f9;
+      color: var(--primary);
+      text-align: left;
+      padding: 8px 10px;
+      border-bottom: 2px solid #cbd5e1;
+      font-weight: 700;
+    }
+
+    .perf-table td {
+      padding: 7px 10px;
+      border-bottom: 1px solid #f1f5f9;
+      color: #334155;
+    }
+
+    .perf-table tr:hover td {
+      background-color: #f8fafc;
+    }
+
+    .tag-green {
+      color: #059669;
+      font-weight: 700;
+      background: #ecfdf5;
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+
+    /* Confusion Matrix Image Styling */
+    .cm-img-container {
+      text-align: center;
+      margin-top: 6px;
+      background: #f8fafc;
+      padding: 8px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .cm-img {
+      max-width: 100%;
+      max-height: 250px;
+      object-fit: contain;
+      border-radius: 6px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    }
+
+    /* Controls List */
+    .controls-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      margin-top: 8px;
+    }
+
+    .ctrl-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 0.78rem;
+    }
+
+    .ctrl-key {
+      display: inline-block;
+      background: #1e293b;
+      color: white;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-family: monospace;
+      margin-right: 4px;
+      font-size: 0.72rem;
+    }
+
+    /* Footer */
+    .poster-footer {
+      background: #0f1f3d;
+      color: white;
+      padding: 16px 45px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.85rem;
+      border-top: 3px solid #2563eb;
+    }
+
+    .footer-left {
+      color: #94a3b8;
+    }
+
+    .footer-left strong {
+      color: white;
+    }
+
+    .footer-right {
+      display: flex;
+      gap: 20px;
+      color: #94a3b8;
+    }
+
+    /* Print Optimization Rules */
+    @media print {
+      body {
+        background: none;
+        padding: 0;
+        margin: 0;
+      }
+      .toolbar {
+        display: none !important;
+      }
+      .poster-sheet {
+        width: 100% !important;
+        min-height: auto !important;
+        margin: 0 !important;
+        box-shadow: none !important;
+        border: none !important;
+        border-radius: 0 !important;
+      }
+      @page {
+        size: A3 landscape;
+        margin: 0;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Floating Toolbar -->
+  <div class="toolbar">
+    <button class="btn" onclick="window.print()">
+      <span>🖨️</span> Print / Save as PDF
+    </button>
+    <a class="btn btn-secondary" href="http://localhost:8501" target="_blank">
+      <span>🌐</span> Open Web App
+    </a>
+  </div>
+
+  <!-- The Poster Sheet -->
+  <div class="poster-sheet" id="poster">
+    
+    <!-- Header Banner -->
+    <header class="poster-header">
+      <div class="header-main">
+        <div class="header-badges">
+          <span class="badge">Machine Spectra 1.0</span>
+          <span class="badge badge-date">📅 Presentation: September 8, 2026</span>
+          <span class="badge" style="border-color: #8b5cf6; color: #c4b5fd;">Edge AI & Speech Synthesis</span>
+        </div>
+        <h1 class="poster-title">REAL-TIME AMERICAN SIGN LANGUAGE (ASL)<br>RECOGNITION & SPEECH SYNTHESIS</h1>
+        <p class="poster-subtitle">Bridging Communication Barriers through MediaPipe Spatial Landmark Extraction & Random Forest Ensemble</p>
+      </div>
+      <div class="header-meta">
+        <div class="meta-college">Sri Sairam College of Engineering</div>
+        <div class="meta-dept">Dept. of Artificial Intelligence & Machine Learning (VTU)</div>
+        <div class="meta-presenter">👤 Presenter: Naveen (AIML 5th Semester)</div>
+      </div>
+    </header>
+
+    <!-- Key Metrics Ribbon -->
+    <section class="metric-ribbon">
+      <div class="ribbon-item">
+        <div class="ribbon-icon">🎯</div>
+        <div>
+          <div class="ribbon-value">100.0%</div>
+          <div class="ribbon-label">Model Test Accuracy</div>
+        </div>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-icon">⚡</div>
+        <div>
+          <div class="ribbon-value">&lt; 10 ms</div>
+          <div class="ribbon-label">Inference Latency (CPU)</div>
+        </div>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-icon">🤟</div>
+        <div>
+          <div class="ribbon-value">27 Classes</div>
+          <div class="ribbon-label">Full A-Z + Space Gesture</div>
+        </div>
+      </div>
+      <div class="ribbon-item">
+        <div class="ribbon-icon">🔊</div>
+        <div>
+          <div class="ribbon-value">Offline TTS</div>
+          <div class="ribbon-label">Real-Time Voice Feedback</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 3-Column Poster Body -->
+    <main class="poster-body">
+      
+      <!-- COLUMN 1: Problem, Approach & Pipeline -->
+      <div class="col">
+        
+        <!-- Abstract & Problem Statement -->
+        <div class="card">
+          <h3 class="card-title"><span class="card-title-icon">📌</span> Abstract & Motivation</h3>
+          <div style="margin-bottom: 12px; border-radius: 8px; overflow: hidden; border: 1px solid #cbd5e1;">
+            <img src="presentation_banner.jpg" alt="ASL Recognition System Banner" style="width: 100%; height: auto; display: block;">
+          </div>
+          <p class="card-text">
+            Over 70 million individuals worldwide rely on sign language as their primary mode of communication. Standard deep-learning vision models (CNNs) require bulky GPUs, exhibit high latency, and struggle with background noise and skin tone variations. 
+            <br><br>
+            <strong>Machine Spectra 1.0</strong> introduces a lightweight, edge-optimized assistive pipeline that converts live webcam feeds of ASL gestures into translated text and synthesized vocal speech in real-time, operating entirely on standard commodity CPUs.
+          </p>
+        </div>
+
+        <!-- End-to-End Pipeline -->
+        <div class="card" style="flex: 1;">
+          <h3 class="card-title"><span class="card-title-icon">⚙️</span> Technical Pipeline</h3>
+          <div class="pipeline-container">
+            <div class="step-box">
+              <div class="step-num">1</div>
+              <div class="step-content">
+                <h4>Video Ingestion (OpenCV)</h4>
+                <p>Captures live 60 FPS video feed with horizontal mirroring.</p>
+              </div>
+            </div>
+            <div class="step-box">
+              <div class="step-num">2</div>
+              <div class="step-content">
+                <h4>Landmark Extraction (MediaPipe)</h4>
+                <p>Detects 21 3D hand joints (42 spatial coordinate values).</p>
+              </div>
+            </div>
+            <div class="step-box">
+              <div class="step-num">3</div>
+              <div class="step-content">
+                <h4>Spatial Normalization</h4>
+                <p>Shifts coordinates to origin for scale and position invariance.</p>
+              </div>
+            </div>
+            <div class="step-box">
+              <div class="step-num">4</div>
+              <div class="step-content">
+                <h4>Random Forest Classification</h4>
+                <p>Ensemble of 100 decision trees outputs prediction & confidence.</p>
+              </div>
+            </div>
+            <div class="step-box">
+              <div class="step-num">5</div>
+              <div class="step-content">
+                <h4>Debouncing & Speech (TTS)</h4>
+                <p>10-frame confirmation buffer triggers spoken audio.</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+
+      <!-- COLUMN 2: Mathematical Normalization & Results -->
+      <div class="col">
+        
+        <!-- Feature Normalization -->
+        <div class="card">
+          <h3 class="card-title"><span class="card-title-icon">📐</span> Landmark Normalization Formula</h3>
+          <p class="card-text">
+            To ensure the system works invariant to the user's distance from the camera or hand position on screen, coordinates are mathematically zero-centered:
+          </p>
+          <div class="formula-box">
+            <div class="formula-text">x'ᵢ = xᵢ - min(X) &emsp; | &emsp; y'ᵢ = yᵢ - min(Y)</div>
+            <div class="formula-desc">Yields a standardized 42-dimensional vector invariant to translation</div>
+          </div>
+          <p class="card-text" style="font-size: 0.8rem; color: #64748b;">
+            • 21 Landmarks × 2 coordinates = <strong>42 input features</strong>.<br>
+            • Ignores background clutter, skin tone, clothing, and camera angles.
+          </p>
+        </div>
+
+        <!-- Evaluation & Confusion Matrix -->
+        <div class="card" style="flex: 1;">
+          <h3 class="card-title"><span class="card-title-icon">📊</span> Experimental Evaluation</h3>
+          <div class="cm-img-container">
+            <img src="confusion_matrix.png" alt="ASL Confusion Matrix" class="cm-img">
+          </div>
+          <p class="card-text" style="font-size: 0.8rem; margin-top: 8px; text-align: center; color: #475569;">
+            <strong>Test Set Confusion Matrix (517 Samples across 27 Classes)</strong><br>
+            Achieved <strong>100.0% precision, recall, and F1-score</strong> on stratified validation data.
+          </p>
+        </div>
+
+      </div>
+
+      <!-- COLUMN 3: Architecture Comparison & Live Controls -->
+      <div class="col">
+        
+        <!-- Architectural Advantage -->
+        <div class="card">
+          <h3 class="card-title"><span class="card-title-icon">🏆</span> Architectural Comparison</h3>
+          <table class="perf-table">
+            <thead>
+              <tr>
+                <th>Feature</th>
+                <th>Standard CNN</th>
+                <th>Our Pipeline</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Input Data</strong></td>
+                <td>Raw Pixels (100k+)</td>
+                <td><span class="tag-green">42 Coordinates</span></td>
+              </tr>
+              <tr>
+                <td><strong>Hardware</strong></td>
+                <td>NVIDIA GPU</td>
+                <td><span class="tag-green">Standard CPU</span></td>
+              </tr>
+              <tr>
+                <td><strong>Latency</strong></td>
+                <td>40 - 80 ms</td>
+                <td><span class="tag-green">&lt; 10 ms (60 FPS)</span></td>
+              </tr>
+              <tr>
+                <td><strong>Lighting Impact</strong></td>
+                <td>Severe degradation</td>
+                <td><span class="tag-green">Robust invariance</span></td>
+              </tr>
+              <tr>
+                <td><strong>Model Size</strong></td>
+                <td>50 - 200 MB</td>
+                <td><span class="tag-green">2.3 MB</span></td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <!-- Interactive Demo Features -->
+        <div class="card">
+          <h3 class="card-title"><span class="card-title-icon">🎮</span> Live Demo & Key Controls</h3>
+          <p class="card-text">
+            The system provides dual-mode deployment:
+          </p>
+          <div class="controls-grid">
+            <div class="ctrl-item"><span class="ctrl-key">HOLD</span> Commit Letter</div>
+            <div class="ctrl-item"><span class="ctrl-key">SPACE</span> Speak Word</div>
+            <div class="ctrl-item"><span class="ctrl-key">S</span> Speak Sentence</div>
+            <div class="ctrl-item"><span class="ctrl-key">BS</span> Undo Letter</div>
+            <div class="ctrl-item"><span class="ctrl-key">C</span> Clear Sentence</div>
+            <div class="ctrl-item"><span class="ctrl-key">Q</span> Clean Exit</div>
+          </div>
+        </div>
+
+        <!-- Future Scope & Conclusion -->
+        <div class="card" style="flex: 1;">
+          <h3 class="card-title"><span class="card-title-icon">🔮</span> Future Scope & Conclusion</h3>
+          <p class="card-text">
+            <strong>Conclusion:</strong> Machine Spectra demonstrates that geometric landmark extraction combined with ensemble learning offers a high-precision, zero-latency alternative to deep networks for edge sign translation.
+            <br><br>
+            <strong>Future Scope:</strong>
+            <br>• Integrating Temporal LSTMs for dynamic continuous signs (e.g., 'J', 'Z').
+            <br>• Two-handed interaction for full conversational ASL.
+            <br>• Large Language Model (LLM) grammar synthesis.
+          </p>
+        </div>
+
+      </div>
+
+    </main>
+
+    <!-- Footer Banner -->
+    <footer class="poster-footer">
+      <div class="footer-left">
+        <strong>Sri Sairam College of Engineering</strong> — Department of Artificial Intelligence & Machine Learning | Project Presentation
+      </div>
+      <div class="footer-right">
+        <span>📅 Date: September 8, 2026</span>
+        <span>💻 Model: Random Forest Ensemble</span>
+        <span>🚀 Version: 1.0</span>
+      </div>
+    </footer>
+
+  </div>
+
+</body>
+</html>
